@@ -1,100 +1,56 @@
-import { ActionsOnly, createSharedStoreHook, NoActions } from "../src/index";
-import type { ReactShape } from "../src/types";
+import type {
+  ActionsOnly as ActionsOnlyType,
+  createSharedStoreHook as CreateSharedStoreHook,
+} from "../src/index";
+
+let subscriberCounter = 0;
+const setStateFuncs: { [id: number]: () => void } = {};
+const unmountFuncs: { [id: number]: (() => void) | undefined } = {};
+
+const mockSetState = () => {
+  subscriberCounter += 1;
+
+  const setStateFunc = jest.fn();
+
+  setStateFuncs[subscriberCounter] = setStateFunc;
+
+  return setStateFunc;
+};
+
+const mockUseEffect = (fn: () => () => void) => {
+  unmountFuncs[subscriberCounter] = fn();
+};
+
+const React = {
+  useEffect: jest.fn(mockUseEffect),
+  useMemo: jest.fn((fn: () => unknown) => fn()),
+  useState: jest.fn(() => [undefined, mockSetState()]),
+};
+
+jest.mock("react", () => React);
+
+const index = require("../src/index");
+
+const createSharedStoreHook: typeof CreateSharedStoreHook =
+  index.createSharedStoreHook;
+
+const ActionsOnly: typeof ActionsOnlyType = index.ActionsOnly;
 
 it("should throw the expected errors when passed wrong parameters (i.e. in JS)", () => {
   // intentionally pass something that doesn't fulfill the requirements
-  let useSharedStoreHook = createSharedStoreHook(42 as unknown as ReactShape);
-
-  expect(typeof useSharedStoreHook).toEqual("function");
+  let useSharedStoreHook = createSharedStoreHook(
+    // @ts-expect-error wrong param type
+    42
+  );
 
   let error;
 
   try {
     error = undefined;
-    useSharedStoreHook();
-  } catch (e) {
-    error = e;
-  }
-
-  expect(error).toEqual(new TypeError("React.useMemo is not a function"));
-
-  useSharedStoreHook = createSharedStoreHook({
-    useMemo: jest.fn(),
-  } as unknown as ReactShape);
-
-  expect(typeof useSharedStoreHook).toEqual("function");
-
-  try {
-    error = undefined;
-    useSharedStoreHook();
-  } catch (e) {
-    error = e;
-  }
-
-  expect(error instanceof TypeError).toBeTruthy();
-
-  expect(
-    (error as TypeError).message.endsWith(
-      " is not a function or its return value is not iterable"
-    )
-  ).toBeTruthy();
-
-  useSharedStoreHook = createSharedStoreHook({
-    useMemo: jest.fn,
-    useState: jest.fn(),
-  } as unknown as ReactShape);
-
-  expect(typeof useSharedStoreHook).toEqual("function");
-
-  try {
-    error = undefined;
-    useSharedStoreHook();
-  } catch (e) {
-    error = e;
-  }
-
-  expect(error).toEqual(
-    new TypeError(
-      "undefined is not iterable (cannot read property Symbol(Symbol.iterator))"
-    )
-  );
-
-  useSharedStoreHook = createSharedStoreHook({
-    useMemo: () => undefined,
-    useState: () => [],
-  } as unknown as ReactShape);
-
-  expect(typeof useSharedStoreHook).toEqual("function");
-
-  try {
-    error = undefined;
-    useSharedStoreHook();
-  } catch (e) {
-    error = e;
-  }
-
-  expect(error).toEqual(new TypeError("React.useEffect is not a function"));
-
-  useSharedStoreHook = createSharedStoreHook({
-    useEffect: (fn: () => unknown) => fn(),
-    useMemo: (fn: () => unknown) => fn(),
-    useState: () => [],
-  } as unknown as ReactShape);
-
-  expect(typeof useSharedStoreHook).toEqual("function");
-
-  try {
-    error = undefined;
-    useSharedStoreHook();
-  } catch (e) {
-    error = e;
-  }
-
-  expect(error).toBeUndefined();
-
-  try {
-    error = undefined;
-    useSharedStoreHook(42 as unknown as typeof NoActions);
+    useSharedStoreHook(
+      // @ts-expect-error wrong param type
+      42
+    );
   } catch (e) {
     error = e;
   }
@@ -103,7 +59,10 @@ it("should throw the expected errors when passed wrong parameters (i.e. in JS)",
 
   try {
     error = undefined;
-    useSharedStoreHook([42] as unknown as typeof NoActions);
+    useSharedStoreHook(
+      // @ts-expect-error wrong param type
+      [42]
+    );
   } catch (e) {
     error = e;
   }
@@ -112,30 +71,18 @@ it("should throw the expected errors when passed wrong parameters (i.e. in JS)",
 
   try {
     error = undefined;
-    useSharedStoreHook(jest.fn(), 42 as unknown as () => unknown);
+    useSharedStoreHook(
+      // @ts-expect-error wrong param type
+      jest.fn(),
+      42
+    );
   } catch (e) {
     error = e;
   }
 
   expect(error).toEqual(new TypeError("mapActions is not a function"));
 
-  try {
-    error = undefined;
-    const actions = useSharedStoreHook(ActionsOnly);
-    actions.forceRerenderSubscribers();
-  } catch (e) {
-    error = e;
-  }
-
-  expect(error).toEqual(
-    new TypeError("setStateFromReactHook is not a function")
-  );
-
-  useSharedStoreHook = createSharedStoreHook({
-    useEffect: (fn: () => unknown) => fn(),
-    useMemo: (fn: () => unknown) => fn(),
-    useState: () => [undefined, jest.fn()],
-  } as unknown as ReactShape);
+  useSharedStoreHook = createSharedStoreHook();
 
   expect(typeof useSharedStoreHook).toEqual("function");
 
@@ -206,11 +153,6 @@ it("should throw the expected errors when passed wrong parameters (i.e. in JS)",
   try {
     error = undefined;
     useSharedStoreHook = createSharedStoreHook(
-      {
-        useEffect: (fn: () => unknown) => fn(),
-        useMemo: (fn: () => unknown) => fn(),
-        useState: () => [undefined, jest.fn()],
-      } as unknown as ReactShape,
       // @ts-expect-error wrong param type
       () => "foo"
     );
@@ -224,11 +166,6 @@ it("should throw the expected errors when passed wrong parameters (i.e. in JS)",
   try {
     error = undefined;
     useSharedStoreHook = createSharedStoreHook(
-      {
-        useEffect: (fn: () => unknown) => fn(),
-        useMemo: (fn: () => unknown) => fn(),
-        useState: () => [undefined, jest.fn()],
-      } as unknown as ReactShape,
       // @ts-expect-error wrong param type
       { actions: 42 }
     );

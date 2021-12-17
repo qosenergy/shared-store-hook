@@ -15,10 +15,9 @@ It's just like [`useState`](https://reactjs.org/docs/hooks-reference.html#usesta
 ## Minimal example
 
 ```ts
-import React from "react";
 import { createSharedStoreHook } from "shared-store-hook";
 
-export const useDarkMode = createSharedStoreHook<boolean>(React);
+export const useDarkMode = createSharedStoreHook<boolean>();
 ```
 
 _(If you're [using JavaScript and not TypeScript](#use-in-javascript-instead-of-typescript), just remove the `<boolean>` bit above)_
@@ -83,7 +82,7 @@ If you:
 
 It is lightweight, but powerful: simple things remain simple, and complex things are easy.
 
-- No dependency (just pass [React](#compatible-react-versions) as an argument!)
+- No dependency (you just need [React](#compatible-react-versions) in your project!)
 - No [Context](#context)
 - No HoC
 - No boilerplate or [Redux](#redux)-like complexity - you only write what you need
@@ -204,13 +203,10 @@ So, in `useDarkMode.ts` we need to create a shared store and return a custom hoo
 For this, we call this lib's `createSharedStoreHook` function:
 
 ```ts
-import React from "react";
 import { createSharedStoreHook } from "shared-store-hook";
 
-export const useDarkMode = createSharedStoreHook<boolean>(React);
+export const useDarkMode = createSharedStoreHook<boolean>();
 ```
-
-Why do we need to pass React as an argument? So that the lib doesn't need it in its `dependencies` or `peerDependencies` and there are no version conflicts.
 
 So, what we've done so far is create a custom hook, and told the lib it's for a **store** that will hold a `boolean` **state**. That's step 1 of the two-step process.
 
@@ -446,16 +442,14 @@ const [preferences, setPreferences] = useState(initialState);
 Let's get back to our `useDarkMode.ts` file from [above](#a-basic-example-with-shared-store-hook):
 
 ```ts
-import React from "react";
 import { createSharedStoreHook } from "shared-store-hook";
 
-export const useDarkMode = createSharedStoreHook<boolean>(React);
+export const useDarkMode = createSharedStoreHook<boolean>();
 ```
 
 Only this time, we'll create something a little more elaborate - a custom shared store hook called `usePreferences`, in `usePreferences.ts`:
 
 ```ts
-import React from "react";
 import { createSharedStoreHook } from "shared-store-hook";
 
 const initialState = {
@@ -463,10 +457,9 @@ const initialState = {
   language: "en" as "en" | "fr" | "uk",
 };
 
-export const usePreferences = createSharedStoreHook<typeof initialState>(
-  React,
-  { initialState }
-);
+export const usePreferences = createSharedStoreHook<typeof initialState>({
+  initialState,
+});
 ```
 
 or, if you'd rather be more explicit:
@@ -482,16 +475,15 @@ const initialState: usePreferencesState = {
   language: "en",
 };
 
-export const usePreferences = createSharedStoreHook<usePreferencesState>(
-  React,
-  { initialState }
-);
+export const usePreferences = createSharedStoreHook<usePreferencesState>({
+  initialState,
+});
 ```
 
 Contrast this with our first example call of `createSharedStoreHook`:
 
 ```ts
-export const useDarkMode = createSharedStoreHook<boolean>(React);
+export const useDarkMode = createSharedStoreHook<boolean>();
 ```
 
 What's similar is that we still pass the type of the state if we're in TypeScript (then `boolean`, now `usePreferencesState`).
@@ -501,15 +493,12 @@ What's different is that we now pass a second argument to `createSharedStoreHook
 This could of course also be :
 
 ```ts
-export const usePreferences = createSharedStoreHook<usePreferencesState>(
-  React,
-  {
-    initialState: {
-      isDarkMode: true,
-      language: "en",
-    },
-  }
-);
+export const usePreferences = createSharedStoreHook<usePreferencesState>({
+  initialState: {
+    isDarkMode: true,
+    language: "en",
+  },
+});
 ```
 
 but it's arguably less legible.
@@ -1053,10 +1042,9 @@ And `boolean` is a type that describes the shape of our entire state. Here it is
 So now that we've got our `actions` ready, we just have to pass them at store creation time:
 
 ```ts
-export const useDarkMode = createSharedStoreHook<boolean, typeof actions>(
-  React,
-  { actions }
-);
+export const useDarkMode = createSharedStoreHook<boolean, typeof actions>({
+  actions,
+});
 ```
 
 Or, if we want to be more explicit:
@@ -1064,19 +1052,18 @@ Or, if we want to be more explicit:
 ```ts
 type DarkModeActions = typeof actions;
 
-export const useDarkMode = createSharedStoreHook<boolean, DarkModeActions>(
-  React,
-  { actions }
-);
+export const useDarkMode = createSharedStoreHook<boolean, DarkModeActions>({
+  actions,
+});
 ```
 
 And we should also provide an [`initialState`](#initial-state) alongside the actions:
 
 ```ts
-export const useDarkMode = createSharedStoreHook<boolean, DarkModeActions>(
-  React,
-  { actions, initialState: false }
-);
+export const useDarkMode = createSharedStoreHook<boolean, DarkModeActions>({
+  actions,
+  initialState: false,
+});
 ```
 
 But now it would make more sense for our `initialState` to retrieve the value that was stored by `setAndSaveDarkMode`:
@@ -1084,10 +1071,10 @@ But now it would make more sense for our `initialState` to retrieve the value th
 ```ts
 const initialState: boolean = retrieveSavedValue(); // whatever this does
 
-export const useDarkMode = createSharedStoreHook<boolean, DarkModeActions>(
-  React,
-  { actions, initialState }
-);
+export const useDarkMode = createSharedStoreHook<boolean, DarkModeActions>({
+  actions,
+  initialState,
+});
 ```
 
 Finally, as we set out to do, we can do this:
@@ -1123,10 +1110,9 @@ const actions = (store: SharedStore<MyState>) => ({
 
 type MyActions = typeof actions;
 
-export const useMySharedStore = createSharedStoreHook<MyState, MyActions>(
-  React,
-  { actions }
-);
+export const useMySharedStore = createSharedStoreHook<MyState, MyActions>({
+  actions,
+});
 ```
 
 What can you actually _do_ in `myAction`?
@@ -1229,10 +1215,10 @@ Now every subscriber will be notified that something has changed, and, depending
 And we should also provide an [`initialState`](#initial-state) alongside the actions:
 
 ```ts
-export const useTodoList = createSharedStoreHook<TodoState, TodoActions>(
-  React,
-  { actions, initialState: [] }
-);
+export const useTodoList = createSharedStoreHook<TodoState, TodoActions>({
+  actions,
+  initialState: [],
+});
 ```
 
 or:
@@ -1240,10 +1226,10 @@ or:
 ```ts
 const initialState: TodoState = [];
 
-export const useTodoList = createSharedStoreHook<TodoState, TodoActions>(
-  React,
-  { actions, initialState }
-);
+export const useTodoList = createSharedStoreHook<TodoState, TodoActions>({
+  actions,
+  initialState,
+});
 ```
 
 ## Calling a custom action within a custom action
@@ -1276,10 +1262,10 @@ Or that you inherit the custom actions from somewhere else, and can't change the
 Starting from the last example from the previous section, if we had:
 
 ```ts
-export const useTodoList = createSharedStoreHook<TodoState, TodoActions>(
-  React,
-  { actions, initialState }
-);
+export const useTodoList = createSharedStoreHook<TodoState, TodoActions>({
+  actions,
+  initialState,
+});
 ```
 
 And then in one calling component:
@@ -1444,13 +1430,11 @@ And even though this library sports "advanced" features, its basic usage remains
 
 # Compatible React versions
 
-This library uses React hooks (who doesn't nowadays?), so you need at least React v16.8.
-
-It doesn't have any React peer dependency with a specific version number, as some installers may complain that the bleeding edge version you're using is too recent for the lib! ;)
+This library uses React hooks (who doesn't nowadays?), so you need at least React v16.8 in any project using it.
 
 The lib will remain compatible with future major versions of React as long as the behaviours of `useState`, `useEffect` and `useMemo` don't change.
 
-Specifically, in order not to throw an exception at runtime, its _minimum_ expectations are that:
+Specifically, its _minimum_ expectations are that:
 
 - `useEffect` and `useMemo` are callable, accept a function as a first argument, and call that function
 - `useState` is callable, and returns an array, of which the second element is callable
@@ -1478,10 +1462,9 @@ const initialState: usePreferencesState = {
   language: "en",
 };
 
-export const usePreferences = createSharedStoreHook<usePreferencesState>(
-  React,
-  { initialState }
-);
+export const usePreferences = createSharedStoreHook<usePreferencesState>({
+  initialState,
+});
 ```
 
 Becomes this in JavaScript:
@@ -1492,7 +1475,7 @@ const initialState = {
   language: "en",
 };
 
-export const usePreferences = createSharedStoreHook(React, { initialState });
+export const usePreferences = createSharedStoreHook({ initialState });
 ```
 
 Of course you loose type safety, some code completion, and all of the other goodness of TypeScript - but it will work nonetheless.

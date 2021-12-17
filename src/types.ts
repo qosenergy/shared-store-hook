@@ -29,14 +29,6 @@ export interface DefaultSharedStoreActions<SharedStoreState> {
   ) => void;
 }
 
-export interface ReactShape {
-  useEffect(...args: Array<unknown>): void;
-  useMemo(...args: Array<unknown>): unknown;
-  useState<StateType = unknown>(
-    arg?: StateType
-  ): [StateType, (arg: StateType) => void];
-}
-
 export interface SharedStore<SharedStoreState>
   extends DefaultSharedStoreActions<SharedStoreState> {
   state: SharedStoreState;

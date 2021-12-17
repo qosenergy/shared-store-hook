@@ -1,5 +1,7 @@
-import { createSharedStoreHook, NoActions } from "../src/index";
-import type { ReactShape } from "../src/types";
+import type {
+  createSharedStoreHook as CreateSharedStoreHook,
+  NoActions as NoActionsType,
+} from "../src/index";
 
 let subscriberCounter = 0;
 const setStateFuncs: { [id: number]: () => void } = {};
@@ -23,12 +25,21 @@ const React = {
   useEffect: jest.fn(mockUseEffect),
   useMemo: jest.fn((fn: () => unknown) => fn()),
   useState: jest.fn(() => [undefined, mockSetState()]),
-} as ReactShape;
+};
+
+jest.mock("react", () => React);
+
+const index = require("../src/index");
+
+const createSharedStoreHook: typeof CreateSharedStoreHook =
+  index.createSharedStoreHook;
+
+const NoActions: typeof NoActionsType = index.NoActions;
 
 it("should re-render only when the relevant mapped state has changed", () => {
   const initialState = { fieldOne: 42, fieldTwo: 84 };
 
-  const useSharedStoreHook = createSharedStoreHook(React, {
+  const useSharedStoreHook = createSharedStoreHook({
     actions: (store) => ({ getState: () => store.state }),
     initialState,
   });

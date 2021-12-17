@@ -1,7 +1,8 @@
-import { ActionsOnly, createSharedStoreHook, NoActions } from "../src/index";
-import type { ReactShape } from "../src/types";
-
-/* eslint-disable @typescript-eslint/unbound-method */
+import type {
+  ActionsOnly as ActionsOnlyType,
+  createSharedStoreHook as CreateSharedStoreHook,
+  NoActions as NoActionsType,
+} from "../src/index";
 
 let subscriberCounter = 0;
 const setStateFuncs: { [id: number]: () => void } = {};
@@ -25,7 +26,18 @@ const React = {
   useEffect: jest.fn(mockUseEffect),
   useMemo: jest.fn((fn: () => unknown) => fn()),
   useState: jest.fn(() => [undefined, mockSetState()]),
-} as ReactShape;
+};
+
+jest.mock("react", () => React);
+
+const index = require("../src/index");
+
+const createSharedStoreHook: typeof CreateSharedStoreHook =
+  index.createSharedStoreHook;
+
+const ActionsOnly: typeof ActionsOnlyType = index.ActionsOnly;
+
+const NoActions: typeof NoActionsType = index.NoActions;
 
 const defaultActions = `
   forceRerenderSubscribers
@@ -38,7 +50,7 @@ const defaultActions = `
   .filter(Boolean);
 
 it("should create a basic shared store hook", () => {
-  const useSharedStoreHook = createSharedStoreHook(React);
+  const useSharedStoreHook = createSharedStoreHook();
 
   expect(typeof useSharedStoreHook).toEqual("function");
 

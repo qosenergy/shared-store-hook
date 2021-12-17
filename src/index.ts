@@ -1,9 +1,9 @@
+import React from "react";
 import { ActionsOnly, NoActions } from "./types";
 
 import type {
   ActionsFromSharedStore,
   DefaultSharedStoreActions,
-  ReactShape,
   SharedStore,
   SharedStoreActions,
   Subscriber,
@@ -22,16 +22,16 @@ export type {
 export const createSharedStoreHook = <
   SharedStoreState = undefined,
   SharedStoreActionsWithoutDefaults extends ActionsFromSharedStore<SharedStoreState> = ActionsFromSharedStore<SharedStoreState>
->(
-  React: ReactShape,
-  {
-    actions: optionalActions,
-    initialState,
-  }: {
-    actions?: SharedStoreActionsWithoutDefaults;
-    initialState?: SharedStoreState;
-  } = {}
-): UseSharedStoreHook<SharedStoreState, SharedStoreActionsWithoutDefaults> => {
+>({
+  actions: optionalActions,
+  initialState,
+}: {
+  actions?: SharedStoreActionsWithoutDefaults;
+  initialState?: SharedStoreState;
+} = {}): UseSharedStoreHook<
+  SharedStoreState,
+  SharedStoreActionsWithoutDefaults
+> => {
   const subscribers = new Set<Subscriber>();
 
   const subscriberActions = {
