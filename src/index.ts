@@ -194,12 +194,12 @@ export const createSharedStoreHook = <
 
           let hasStateChanged: boolean;
 
-          if (Array.isArray(mappedState)) {
-            hasStateChanged = mappedState.some(
+          if (Array.isArray(mapState)) {
+            hasStateChanged = (mappedState as MappedState[]).some(
               (stateElement, index) =>
                 !Object.is(
                   stateElement,
-                  (subscriber.lastKnownMappedState as typeof mappedState)[index]
+                  (subscriber.lastKnownMappedState as MappedState[])[index]
                 )
             );
           } else {
