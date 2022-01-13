@@ -87,7 +87,7 @@ It is lightweight, but powerful: simple things remain simple, and complex things
 - No HoC
 - No boilerplate or [Redux](#redux)-like complexity - you only write what you need
 - Everything (including the [client states and actions](#a-few-definitions)) is accurately typed in TypeScript (the lib can also be used in JavaScript)
-- [Feels React-y](#it-feels-more-react-y) (uses `useState` internally, as well as `useEffect` and `useMemo`)
+- [Feels React-y](#it-feels-more-react-y) (uses `useState` internally, as well as `useLayoutEffect` and `useMemo`)
 - Small footprint - the transpiled code is about 100 lines long (not minified)
 - Basic (`useState`-like) and advanced features ([state slices](#mapped-state-or-state-slices), [custom actions](#custom-actions), ..)
 - [Unmount safe](#unmount-safety)
@@ -1432,11 +1432,11 @@ And even though this library sports "advanced" features, its basic usage remains
 
 This library uses React hooks (who doesn't nowadays?), so you need at least React v16.8 in any project using it.
 
-The lib will remain compatible with future major versions of React as long as the behaviours of `useState`, `useEffect` and `useMemo` don't change.
+The lib will remain compatible with future major versions of React as long as the behaviours of `useState`, `useLayoutEffect` and `useMemo` don't change.
 
 Specifically, its _minimum_ expectations are that:
 
-- `useEffect` and `useMemo` are callable, accept a function as a first argument, and call that function
+- `useLayoutEffect` and `useMemo` are callable, accept a function as a first argument, and call that function
 - `useState` is callable, and returns an array, of which the second element is callable
 
 As long as this doesn't change in React, the lib won't die on you!
