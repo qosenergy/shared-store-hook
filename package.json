@@ -11,25 +11,6 @@
     "types.js"
   ],
   "main": "index.js",
-  "scripts": {
-    "build": "tsc",
-    "lint-staged": "lint-staged",
-    "lint:fix": "eslint --fix --ext .js,.ts,.tsx ./src",
-    "lint": "eslint --ext .js,.ts,.tsx ./src",
-    "pre-commit": "npm run lint && npm run lint-staged",
-    "pre-push": "npm run build",
-    "prebuild": "\\rm -rf lib/ && npm run lint && npm run test:coverage:no-watch",
-    "prelint:fix": "npm run prettier",
-    "prelint": "npm run prettier",
-    "pretest": "\\rm -rf coverage/",
-    "prettier": "prettier --write './{scripts,src}/*.ts' .eslintrc.js package.json tsconfig.json",
-    "publish": "ts-node --dir scripts publish.ts",
-    "test:ci": "CI=true && npm run lint && npm run test:coverage:no-watch && npm run build",
-    "test:coverage": "npm test -- --coverage",
-    "test:coverage:no-watch": "npm test -- --watchAll=false --coverage",
-    "test:no-watch": "npm test -- --watchAll=false",
-    "test": "jest --runInBand --watchAll=true"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/qosenergy/shared-store-hook.git"
@@ -48,53 +29,7 @@
     "url": "https://github.com/qosenergy/shared-store-hook/issues"
   },
   "homepage": "https://github.com/qosenergy/shared-store-hook#readme",
-  "devDependencies": {
-    "@types/jest": "^27.0.3",
-    "@types/node": "^16.11.10",
-    "@types/prompt-sync": "^4.1.1",
-    "@types/react": ">=16.8",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-deprecation": "^1.2.1",
-    "eslint-plugin-escape": "^1.0.0",
-    "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-jest": "^25.3.0",
-    "eslint-plugin-no-null": "^1.0.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
-    "husky": "^7.0.4",
-    "jest": "^27.4.1",
-    "lint-staged": "^12.1.2",
-    "prettier": "^2.4.1",
-    "prompt-sync": "^4.2.0",
-    "react": ">=16.8",
-    "ts-jest": "^27.0.7",
-    "ts-node": "^10.4.0",
-    "typescript": "^4.5.2"
-  },
   "peerDependencies": {
     "react": ">=16.8"
-  },
-  "lint-staged": {
-    "*.{js,json,md,ts,tsx}": [
-      "prettier --write"
-    ]
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "./src/**/*.ts"
-    ],
-    "coverageThreshold": {
-      "./src/**/*.ts": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100,
-        "statements": 100
-      }
-    },
-    "preset": "ts-jest",
-    "testEnvironment": "node"
   }
 }
