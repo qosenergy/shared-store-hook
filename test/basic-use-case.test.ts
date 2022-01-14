@@ -18,12 +18,12 @@ const mockSetState = () => {
   return setStateFunc;
 };
 
-const mockUseEffect = (fn: () => () => void) => {
+const mockUseLayoutEffect = (fn: () => () => void) => {
   unmountFuncs[subscriberCounter] = fn();
 };
 
 const React = {
-  useEffect: jest.fn(mockUseEffect),
+  useLayoutEffect: jest.fn(mockUseLayoutEffect),
   useMemo: jest.fn((fn: () => unknown) => fn()),
   useState: jest.fn(() => [undefined, mockSetState()]),
 };
@@ -85,11 +85,27 @@ it("should create a basic shared store hook", () => {
 
   expect(Object.keys(setStateFuncs).length).toEqual(4);
 
-  expect(React.useEffect).toHaveBeenCalledTimes(4);
-  expect(React.useEffect).toHaveBeenNthCalledWith(1, expect.any(Function), []);
-  expect(React.useEffect).toHaveBeenNthCalledWith(2, expect.any(Function), []);
-  expect(React.useEffect).toHaveBeenNthCalledWith(3, expect.any(Function), []);
-  expect(React.useEffect).toHaveBeenNthCalledWith(4, expect.any(Function), []);
+  expect(React.useLayoutEffect).toHaveBeenCalledTimes(4);
+  expect(React.useLayoutEffect).toHaveBeenNthCalledWith(
+    1,
+    expect.any(Function),
+    []
+  );
+  expect(React.useLayoutEffect).toHaveBeenNthCalledWith(
+    2,
+    expect.any(Function),
+    []
+  );
+  expect(React.useLayoutEffect).toHaveBeenNthCalledWith(
+    3,
+    expect.any(Function),
+    []
+  );
+  expect(React.useLayoutEffect).toHaveBeenNthCalledWith(
+    4,
+    expect.any(Function),
+    []
+  );
 
   expect(setStateFuncs[1]).not.toHaveBeenCalled();
   expect(setStateFuncs[2]).not.toHaveBeenCalled();
