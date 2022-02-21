@@ -19,6 +19,8 @@ export type {
   UseSharedStoreHook,
 };
 
+const useIsomorphicLayoutEffect = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
+
 export const createSharedStoreHook = <
   SharedStoreState = undefined,
   SharedStoreActionsWithoutDefaults extends ActionsFromSharedStore<SharedStoreState> = ActionsFromSharedStore<SharedStoreState>
@@ -172,7 +174,7 @@ export const createSharedStoreHook = <
     // eslint-disable-next-line no-null/no-null
     const [, setStateFromReactHook] = React.useState(Object.create(null));
 
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       if (isActionsOnly) {
         return undefined;
       }
