@@ -28,7 +28,12 @@ const React = {
   useState: jest.fn(() => [undefined, mockSetState()]),
 };
 
+const useIsomorphicLayoutEffect = {
+  useIsomorphicLayoutEffect: jest.fn(mockUseLayoutEffect),
+};
+
 jest.mock("react", () => React);
+jest.mock("../src/useIsomorphicLayoutEffect", () => useIsomorphicLayoutEffect);
 
 const index = require("../src/index");
 
@@ -85,23 +90,23 @@ it("should create a basic shared store hook", () => {
 
   expect(Object.keys(setStateFuncs).length).toEqual(4);
 
-  expect(React.useLayoutEffect).toHaveBeenCalledTimes(4);
-  expect(React.useLayoutEffect).toHaveBeenNthCalledWith(
+  expect(useIsomorphicLayoutEffect.useIsomorphicLayoutEffect).toHaveBeenCalledTimes(4);
+  expect(useIsomorphicLayoutEffect.useIsomorphicLayoutEffect).toHaveBeenNthCalledWith(
     1,
     expect.any(Function),
     []
   );
-  expect(React.useLayoutEffect).toHaveBeenNthCalledWith(
+  expect(useIsomorphicLayoutEffect.useIsomorphicLayoutEffect).toHaveBeenNthCalledWith(
     2,
     expect.any(Function),
     []
   );
-  expect(React.useLayoutEffect).toHaveBeenNthCalledWith(
+  expect(useIsomorphicLayoutEffect.useIsomorphicLayoutEffect).toHaveBeenNthCalledWith(
     3,
     expect.any(Function),
     []
   );
-  expect(React.useLayoutEffect).toHaveBeenNthCalledWith(
+  expect(useIsomorphicLayoutEffect.useIsomorphicLayoutEffect).toHaveBeenNthCalledWith(
     4,
     expect.any(Function),
     []

@@ -28,6 +28,9 @@ const React = {
 };
 
 jest.mock("react", () => React);
+jest.mock("../src/useIsomorphicLayoutEffect", () => ({
+  useIsomorphicLayoutEffect: jest.fn(mockUseLayoutEffect)
+}));
 
 const index = require("../src/index");
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { ActionsOnly, NoActions } from "./types";
+import { useIsomorphicLayoutEffect } from "./useIsomorphicLayoutEffect";
 
 import type {
   ActionsFromSharedStore,
@@ -18,8 +19,6 @@ export type {
   SharedStoreActions,
   UseSharedStoreHook,
 };
-
-const useIsomorphicLayoutEffect = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
 
 export const createSharedStoreHook = <
   SharedStoreState = undefined,
