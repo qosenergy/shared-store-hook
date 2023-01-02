@@ -172,7 +172,7 @@ export const createSharedStoreHook = <
     // eslint-disable-next-line no-null/no-null
     const [, setStateFromReactHook] = React.useState(Object.create(null));
 
-    React.useLayoutEffect(() => {
+    React.useEffect(() => {
       if (isActionsOnly) {
         return undefined;
       }

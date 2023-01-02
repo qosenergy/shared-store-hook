@@ -17,12 +17,12 @@ const mockSetState = () => {
   return setStateFunc;
 };
 
-const mockUseLayoutEffect = (fn: () => () => void) => {
+const mockuseEffect = (fn: () => () => void) => {
   unmountFuncs[subscriberCounter] = fn();
 };
 
 const React = {
-  useLayoutEffect: jest.fn(mockUseLayoutEffect),
+  useEffect: jest.fn(mockuseEffect),
   useMemo: jest.fn((fn: () => unknown) => fn()),
   useState: jest.fn(() => [undefined, mockSetState()]),
 };
