@@ -9,6 +9,7 @@ import type {
   Subscriber,
   UseSharedStoreHook,
 } from "./types";
+import useIsomorphicLayoutEffect from "./hooks/useIsomorphicLayoutEffect ";
 
 export { ActionsOnly, NoActions };
 
@@ -172,7 +173,8 @@ export const createSharedStoreHook = <
     // eslint-disable-next-line no-null/no-null
     const [, setStateFromReactHook] = React.useState(Object.create(null));
 
-    React.useLayoutEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    useIsomorphicLayoutEffect(() => {
       if (isActionsOnly) {
         return undefined;
       }
